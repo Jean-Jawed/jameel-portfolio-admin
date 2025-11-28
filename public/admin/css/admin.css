@@ -46,6 +46,10 @@ body {
 
 .form-group {
   margin-bottom: 20px;
+  padding: 1rem;
+  background: white;
+  border-radius: 6px;
+  border: 1px solid #e9ecef;
 }
 
 .form-group label {
@@ -423,6 +427,7 @@ select {
   padding: 30px;
   overflow-y: auto;
   flex: 1;
+  background: #f8f9fa; /* Fond gris clair pour meilleur contraste */
 }
 
 .modal-close {
@@ -833,6 +838,7 @@ select {
   padding: 0.5rem 1rem;
   border: 1px solid #ced4da;
   background: white;
+  color: #495057; /* Texte gris foncé lisible */
   border-radius: 6px;
   cursor: pointer;
   font-size: 0.875rem;

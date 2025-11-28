@@ -6,7 +6,7 @@
 import { getStorage, ref, uploadBytes, getDownloadURL, deleteObject } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-storage.js';
 import { getFirestore, collection, getDocs, doc, setDoc, deleteDoc } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
 
-let currentGalleryPhotos = [];
+export let currentGalleryPhotos = [];
 
 /**
  * Charger les photos d'une galerie
@@ -36,13 +36,16 @@ export function renderPhotosSection(photos = []) {
     <div class="photos-section" style="margin-top: 2rem; padding-top: 2rem; border-top: 2px solid #e9ecef;">
       <h3 style="margin-bottom: 1rem;">📸 Photos de la galerie</h3>
       
-      <div class="image-upload-area" onclick="document.getElementById('gallery-photos-input').click()">
-        <input type="file" id="gallery-photos-input" multiple accept="image/*" style="display: none;">
-        <p style="margin: 0; color: #6c757d;">
-          📤 Cliquez pour sélectionner des images<br>
-          <small>Formats acceptés : JPG, PNG, GIF</small>
-        </p>
+      <div style="display: flex; gap: 1rem; margin-bottom: 1rem;">
+        <button type="button" class="btn btn-primary" style="flex: 1;" onclick="document.getElementById('gallery-photos-input').click()">
+          ⬆️ Upload depuis ordinateur
+        </button>
+        <button type="button" class="btn btn-secondary" style="flex: 1;" onclick="openMediaBrowserForGalleryPhotos()">
+          📁 Choisir depuis médias
+        </button>
       </div>
+      
+      <input type="file" id="gallery-photos-input" multiple accept="image/*" style="display: none;">
       
       <div id="photos-preview" class="photos-list">
         ${photos.map((photo, i) => renderPhotoItem(photo, i)).join('')}
@@ -54,7 +57,7 @@ export function renderPhotosSection(photos = []) {
 /**
  * Render un item photo
  */
-function renderPhotoItem(photo, index) {
+export function renderPhotoItem(photo, index) {
   return `
     <div class="photo-item" data-url="${photo.image_url}" data-id="${photo.id || ''}">
       <div style="display: grid; grid-template-columns: 100px 1fr auto; gap: 15px; align-items: start;">
@@ -196,4 +199,127 @@ window.movePhotoDown = function(button) {
   if (next) {
     photoItem.parentNode.insertBefore(next, photoItem);
   }
+};
+
+
+/**
+ * Ouvrir Media Browser pour sélectionner des photos de galerie
+ */
+window.openMediaBrowserForGalleryPhotos = async function() {
+  // Importer loadMedia dynamiquement
+  const { loadMedia } = await import('./media-browser.js');
+  const { storage } = await import('./firebase-init.js');
+  
+  // Stocker qu'on est en mode sélection multiple galerie
+  window.galleryPhotosSelectionMode = true;
+  window.selectedGalleryPhotos = [];
+  
+  const modalContent = `
+    <h2>Sélectionner des photos pour la galerie</h2>
+    <p style="color: #6c757d; margin-bottom: 1rem;">
+      Cliquez sur une ou plusieurs images pour les sélectionner
+    </p>
+    <div id="selected-count" style="margin-bottom: 1rem; padding: 0.5rem; background: #e7f3ff; border-radius: 4px; display: none;">
+      <strong>0 image(s) sélectionnée(s)</strong>
+    </div>
+    <div style="margin-bottom: 1rem;">
+      <button class="btn btn-primary" onclick="confirmGalleryPhotosSelection()">✅ Ajouter les photos sélectionnées</button>
+      <button class="btn btn-secondary" onclick="window.hideModal()">Annuler</button>
+    </div>
+    <div id="media-browser-selection"></div>
+  `;
+  
+  window.showModal(modalContent);
+  
+  // Load media in selection mode
+  const container = document.getElementById('media-browser-selection');
+  await loadMedia(storage, container, true);
+};
+
+/**
+ * Toggle sélection d'une photo pour galerie
+ */
+window.toggleGalleryPhotoSelection = function(url) {
+  if (!window.selectedGalleryPhotos) {
+    window.selectedGalleryPhotos = [];
+  }
+  
+  const index = window.selectedGalleryPhotos.indexOf(url);
+  if (index > -1) {
+    window.selectedGalleryPhotos.splice(index, 1);
+  } else {
+    window.selectedGalleryPhotos.push(url);
+  }
+  
+  // Update counter
+  const counter = document.getElementById('selected-count');
+  if (counter) {
+    const count = window.selectedGalleryPhotos.length;
+    counter.innerHTML = `<strong>${count} image(s) sélectionnée(s)</strong>`;
+    counter.style.display = count > 0 ? 'block' : 'none';
+  }
+  
+  // Update visual feedback on items
+  updateGalleryPhotoSelectionUI();
+};
+
+/**
+ * Update UI pour montrer les photos sélectionnées
+ */
+function updateGalleryPhotoSelectionUI() {
+  const items = document.querySelectorAll('.media-item-selectable');
+  items.forEach(item => {
+    const img = item.querySelector('img');
+    if (img && window.selectedGalleryPhotos.includes(img.src)) {
+      item.style.border = '3px solid #28a745';
+      item.style.boxShadow = '0 4px 12px rgba(40, 167, 69, 0.3)';
+    } else {
+      item.style.border = '';
+      item.style.boxShadow = '';
+    }
+  });
+}
+
+/**
+ * Confirmer la sélection et ajouter aux photos
+ */
+window.confirmGalleryPhotosSelection = function() {
+  if (!window.selectedGalleryPhotos || window.selectedGalleryPhotos.length === 0) {
+    showToast('⚠️ Aucune image sélectionnée', 'warning');
+    return;
+  }
+  
+  const count = window.selectedGalleryPhotos.length;
+  
+  // Import currentGalleryPhotos depuis le module
+  import('./photos-manager.js').then(module => {
+    const photos = module.currentGalleryPhotos;
+    
+    // Ajouter chaque photo sélectionnée
+    window.selectedGalleryPhotos.forEach(url => {
+      const timestamp = Date.now();
+      const newPhoto = {
+        image_url: url,
+        caption: { fr: '', en: '', ar: '' },
+        order: photos.length,
+        tempId: `temp-${timestamp}-${Math.random()}`
+      };
+      photos.push(newPhoto);
+    });
+    
+    // Refresh preview
+    const preview = document.getElementById('photos-preview');
+    if (preview) {
+      preview.innerHTML = photos.map((photo, i) => module.renderPhotoItem(photo, i)).join('');
+    }
+    
+    // Close modal
+    window.hideModal();
+    
+    // Reset selection
+    window.selectedGalleryPhotos = [];
+    window.galleryPhotosSelectionMode = false;
+    
+    showToast(`✅ ${count} photo(s) ajoutée(s)`);
+  });
 };

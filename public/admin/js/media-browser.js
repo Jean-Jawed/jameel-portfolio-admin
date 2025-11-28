@@ -81,18 +81,36 @@ async function loadMediaRecursive(storage, folderRef, container, path, selection
  */
 function createMediaItem(url, name, fullPath, selectionMode = false) {
   if (selectionMode) {
-    // Mode sélection : cliquable pour choisir
-    return `
-      <div class="media-item media-item-selectable" onclick="selectImageFromBrowser('${url}')" style="cursor: pointer;">
-        <div class="media-item-image">
-          <img src="${url}" alt="${name}" loading="lazy">
+    // Vérifier si on est en mode sélection multiple (galerie) ou simple (ImagePicker)
+    const isMultipleMode = typeof window.galleryPhotosSelectionMode !== 'undefined' && window.galleryPhotosSelectionMode;
+    
+    if (isMultipleMode) {
+      // Mode sélection multiple pour galerie
+      return `
+        <div class="media-item media-item-selectable" onclick="toggleGalleryPhotoSelection('${url}')" style="cursor: pointer;">
+          <div class="media-item-image">
+            <img src="${url}" alt="${name}" loading="lazy">
+          </div>
+          <div class="media-item-info">
+            <p class="media-item-name" title="${name}">${name.length > 20 ? name.substring(0, 17) + '...' : name}</p>
+            <small style="color: #28a745;">Cliquer pour sélectionner</small>
+          </div>
         </div>
-        <div class="media-item-info">
-          <p class="media-item-name" title="${name}">${name.length > 20 ? name.substring(0, 17) + '...' : name}</p>
-          <small style="color: #28a745;">Cliquer pour sélectionner</small>
+      `;
+    } else {
+      // Mode sélection simple pour ImagePicker
+      return `
+        <div class="media-item media-item-selectable" onclick="selectImageFromBrowser('${url}')" style="cursor: pointer;">
+          <div class="media-item-image">
+            <img src="${url}" alt="${name}" loading="lazy">
+          </div>
+          <div class="media-item-info">
+            <p class="media-item-name" title="${name}">${name.length > 20 ? name.substring(0, 17) + '...' : name}</p>
+            <small style="color: #28a745;">Cliquer pour sélectionner</small>
+          </div>
         </div>
-      </div>
-    `;
+      `;
+    }
   } else {
     // Mode normal : avec actions
     return `

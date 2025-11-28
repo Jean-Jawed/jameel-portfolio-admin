@@ -770,7 +770,7 @@ window.deleteCollaboration = async function(id, org) {
 // MODAL
 // ============================================
 
-function showModal(content) {
+window.showModal = function(content) {
   const modal = document.getElementById('modal');
   const modalContent = document.getElementById('modal-content');
   
