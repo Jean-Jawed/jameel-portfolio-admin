@@ -405,7 +405,7 @@ select {
   max-width: 800px;
   width: 90%;
   max-height: 90vh;
-  overflow: hidden;
+  overflow-y: auto; /* ✅ Scrollable */
   position: relative;
   z-index: 2;
   display: flex;
@@ -803,4 +803,98 @@ select {
   animation: spin 0.6s linear infinite;
   margin-left: 10px;
   vertical-align: middle;
+}
+
+
+/* IMAGE PICKER */
+.image-picker {
+  margin-bottom: 1.5rem;
+  padding: 1rem;
+  background: #f8f9fa;
+  border-radius: 8px;
+  border: 1px solid #dee2e6;
+}
+
+.image-picker label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-weight: 500;
+  color: #495057;
+}
+
+.image-picker-actions {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.image-picker-actions button {
+  flex: 1;
+  padding: 0.5rem 1rem;
+  border: 1px solid #ced4da;
+  background: white;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.875rem;
+  transition: all 0.2s;
+}
+
+.image-picker-actions button:hover {
+  background: #e9ecef;
+  border-color: #adb5bd;
+}
+
+.image-picker-actions button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.image-preview-container {
+  margin: 1rem 0;
+  min-height: 120px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: white;
+  border: 2px dashed #dee2e6;
+  border-radius: 8px;
+  padding: 1rem;
+}
+
+.image-preview {
+  max-width: 100%;
+  max-height: 250px;
+  border-radius: 6px;
+  object-fit: contain;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.no-image {
+  color: #adb5bd;
+  font-size: 0.875rem;
+  text-align: center;
+}
+
+.image-path {
+  display: block;
+  color: #6c757d;
+  font-family: 'Courier New', monospace;
+  font-size: 0.75rem;
+  margin-top: 0.5rem;
+  padding: 0.5rem;
+  background: white;
+  border-radius: 4px;
+  border: 1px solid #e9ecef;
+  word-break: break-all;
+}
+
+.media-item-selectable:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 4px 12px rgba(40, 167, 69, 0.3) !important;
+  border: 2px solid #28a745 !important;
+}
+
+.media-item-selectable:hover .media-item-name {
+  color: #28a745;
+  font-weight: 500;
 }

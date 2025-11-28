@@ -9,22 +9,25 @@ let storageInstance = null;
 
 /**
  * Charger et afficher tous les médias
+ * @param {boolean} selectionMode - Si true, affiche en mode sélection (cliquable pour choisir)
  */
-export async function loadMedia(storage, contentArea) {
+export async function loadMedia(storage, contentArea, selectionMode = false) {
   storageInstance = storage; // Sauvegarder l'instance
   const imagesRef = ref(storage, 'images');
   
   let html = `
-    <div class="section-header">
-      <h1>📁 Bibliothèque de médias</h1>
-      <button class="btn btn-primary btn-small" onclick="window.uploadMedia()">⬆️ Upload</button>
-    </div>
+    ${!selectionMode ? `
+      <div class="section-header">
+        <h1>📁 Bibliothèque de médias</h1>
+        <button class="btn btn-primary btn-small" onclick="window.uploadMedia()">⬆️ Upload</button>
+      </div>
+    ` : ''}
     
     <div class="media-grid" id="media-grid">
       <div class="loading">Chargement des images...</div>
     </div>
     
-    <input type="file" id="media-upload-input" multiple accept="image/*" style="display: none;">
+    ${!selectionMode ? '<input type="file" id="media-upload-input" multiple accept="image/*" style="display: none;">' : ''}
   `;
   
   contentArea.innerHTML = html;
@@ -33,7 +36,7 @@ export async function loadMedia(storage, contentArea) {
   const mediaGrid = document.getElementById('media-grid');
   mediaGrid.innerHTML = '';
   
-  await loadMediaRecursive(storage, imagesRef, mediaGrid, '');
+  await loadMediaRecursive(storage, imagesRef, mediaGrid, '', selectionMode);
   
   if (mediaGrid.children.length === 0) {
     mediaGrid.innerHTML = '<p style="color: #6c757d; text-align: center; padding: 2rem;">Aucune image pour le moment</p>';
@@ -43,14 +46,14 @@ export async function loadMedia(storage, contentArea) {
 /**
  * Charger médias de manière récursive
  */
-async function loadMediaRecursive(storage, folderRef, container, path) {
+async function loadMediaRecursive(storage, folderRef, container, path, selectionMode = false) {
   try {
     const result = await listAll(folderRef);
     
     // Afficher les fichiers
     for (const itemRef of result.items) {
       const url = await getDownloadURL(itemRef);
-      const mediaItem = createMediaItem(url, itemRef.name, itemRef.fullPath);
+      const mediaItem = createMediaItem(url, itemRef.name, itemRef.fullPath, selectionMode);
       container.insertAdjacentHTML('beforeend', mediaItem);
     }
     
@@ -65,7 +68,7 @@ async function loadMediaRecursive(storage, folderRef, container, path) {
         </div>
       `);
       
-      await loadMediaRecursive(storage, prefixRef, container, path ? `${path}/${folderName}` : folderName);
+      await loadMediaRecursive(storage, prefixRef, container, path ? `${path}/${folderName}` : folderName, selectionMode);
     }
   } catch (error) {
     console.error('Erreur chargement médias:', error);
@@ -76,25 +79,41 @@ async function loadMediaRecursive(storage, folderRef, container, path) {
 /**
  * Créer un item média
  */
-function createMediaItem(url, name, fullPath) {
-  return `
-    <div class="media-item">
-      <div class="media-item-image">
-        <img src="${url}" alt="${name}" loading="lazy">
-      </div>
-      <div class="media-item-info">
-        <p class="media-item-name" title="${name}">${name.length > 20 ? name.substring(0, 17) + '...' : name}</p>
-        <div class="media-item-actions">
-          <button class="btn btn-secondary btn-tiny" onclick="window.copyMediaURL('${url}')" title="Copier URL">
-            📋
-          </button>
-          <button class="btn btn-danger btn-tiny" onclick="window.deleteMedia('${fullPath}', '${name}')" title="Supprimer">
-            🗑️
-          </button>
+function createMediaItem(url, name, fullPath, selectionMode = false) {
+  if (selectionMode) {
+    // Mode sélection : cliquable pour choisir
+    return `
+      <div class="media-item media-item-selectable" onclick="selectImageFromBrowser('${url}')" style="cursor: pointer;">
+        <div class="media-item-image">
+          <img src="${url}" alt="${name}" loading="lazy">
+        </div>
+        <div class="media-item-info">
+          <p class="media-item-name" title="${name}">${name.length > 20 ? name.substring(0, 17) + '...' : name}</p>
+          <small style="color: #28a745;">Cliquer pour sélectionner</small>
         </div>
       </div>
-    </div>
-  `;
+    `;
+  } else {
+    // Mode normal : avec actions
+    return `
+      <div class="media-item">
+        <div class="media-item-image">
+          <img src="${url}" alt="${name}" loading="lazy">
+        </div>
+        <div class="media-item-info">
+          <p class="media-item-name" title="${name}">${name.length > 20 ? name.substring(0, 17) + '...' : name}</p>
+          <div class="media-item-actions">
+            <button class="btn btn-secondary btn-tiny" onclick="window.copyMediaURL('${url}')" title="Copier URL">
+              📋
+            </button>
+            <button class="btn btn-danger btn-tiny" onclick="window.deleteMedia('${fullPath}', '${name}')" title="Supprimer">
+              🗑️
+            </button>
+          </div>
+        </div>
+      </div>
+    `;
+  }
 }
 
 /**

@@ -14,6 +14,7 @@ import { auth, db, storage } from './firebase-init.js';
 import { loadGalleryPhotos, renderPhotosSection, initPhotosHandlers, saveGalleryPhotos } from './photos-manager.js';
 import { loadExhibitions, showExhibitionModal, saveExhibition, deleteExhibition, loadPublications, showPublicationModal, savePublication, deletePublication, loadCollaborations, showCollaborationModal, saveCollaboration, deleteCollaboration } from './crud-modules.js';
 import { loadMedia, initMediaUpload } from './media-browser.js';
+import { renderImagePicker, initImagePicker } from './image-picker.js';
 
 // Check auth
 onAuthStateChanged(auth, (user) => {
@@ -159,11 +160,11 @@ async function loadSettings() {
         </div>
       </div>
       
-      <div class="form-group">
-        <label>Photo de profil</label>
-        <input type="file" id="profile-image-input" accept="image/*">
-        ${data.photographer.profile_image ? `<img src="${data.photographer.profile_image}" style="max-width: 200px; margin-top: 10px; border-radius: 6px;">` : ''}
-      </div>
+      ${renderImagePicker({
+        id: 'profile-image',
+        label: 'Photo de profil',
+        currentValue: data.photographer.profile_image || ''
+      })}
       
       <div class="form-group">
         <label>Instagram URL</label>
@@ -221,10 +222,11 @@ async function loadSettings() {
     <div class="card" style="margin-top: 2rem;">
       <h3>Page d'accueil</h3>
       
-      <div class="form-group">
-        <label>Image hero</label>
-        <input type="text" id="hero-image" value="${data.homepage.hero_image}">
-      </div>
+      ${renderImagePicker({
+        id: 'hero-image',
+        label: 'Image hero',
+        currentValue: data.homepage.hero_image || ''
+      })}
       
       <div class="lang-tabs">
         <button class="lang-tab active" onclick="switchLangTab(event, 'hero-fr')">FR</button>
@@ -279,35 +281,14 @@ async function loadSettings() {
   
   // Event listeners
   document.getElementById('save-settings-btn').addEventListener('click', saveSettings);
-  document.getElementById('profile-image-input').addEventListener('change', handleProfileImageUpload);
-}
-
-async function handleProfileImageUpload(e) {
-  const file = e.target.files[0];
-  if (!file) return;
   
-  const storageRef = ref(storage, `images/profile_${Date.now()}.jpg`);
-  await uploadBytes(storageRef, file);
-  const url = await getDownloadURL(storageRef);
-  
-  showToast('✅ Photo de profil uploadée');
-  
-  // Mettre à jour l'affichage
-  const preview = document.querySelector('#profile-image-input + img');
-  if (preview) {
-    preview.src = url;
-  } else {
-    e.target.insertAdjacentHTML('afterend', `<img src="${url}" style="max-width: 200px; margin-top: 10px; border-radius: 6px;">`);
-  }
+  // Init ImagePicker handlers
+  initImagePicker();
 }
 
 async function saveSettings() {
   const btn = document.getElementById('save-settings-btn');
   setLoading(btn, true, 'Enregistrement...');
-  
-  // Récupérer l'URL de la photo de profil
-  const profileImg = document.querySelector('#profile-image-input + img');
-  const profileImageUrl = profileImg ? profileImg.src : '';
   
   // Récupérer les galeries featured
   const featuredCheckboxes = document.querySelectorAll('input[name="featured"]:checked');
@@ -318,7 +299,7 @@ async function saveSettings() {
       name: document.getElementById('photographer-name').value,
       email: document.getElementById('photographer-email').value,
       phone: document.getElementById('photographer-phone').value,
-      profile_image: profileImageUrl,
+      profile_image: document.getElementById('profile-image').value,
       interview_video_url: document.getElementById('interview-video-url').value,
       bio_short: {
         fr: document.getElementById('bio-short-fr').value,
@@ -467,10 +448,11 @@ async function showGalleryModal(gallery) {
         </div>
       </div>
       
-      <div class="form-group">
-        <label>Image de couverture (URL Storage)</label>
-        <input type="text" id="gallery-cover" value="${isEdit ? gallery.cover_image : ''}" required>
-      </div>
+      ${renderImagePicker({
+        id: 'gallery-cover',
+        label: 'Image de couverture',
+        currentValue: isEdit ? gallery.cover_image : ''
+      })}
       
       <div class="form-row">
         <div class="form-group">
@@ -570,6 +552,7 @@ async function showGalleryModal(gallery) {
   // Init handlers
   const galleryId = isEdit ? gallery.id : `gallery-${Date.now()}`;
   initPhotosHandlers(storage, galleryId);
+  initImagePicker();
   
   // Auto-generate slugs
   document.getElementById('gallery-title-fr').addEventListener('input', (e) => {

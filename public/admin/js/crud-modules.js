@@ -3,6 +3,7 @@
  */
 
 import { getFirestore, collection, getDocs, doc, getDoc, setDoc, deleteDoc, serverTimestamp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
+import { renderImagePicker, initImagePicker } from './image-picker.js';
 
 // ============================================
 // EXHIBITIONS
@@ -122,15 +123,17 @@ export async function showExhibitionModal(db, exhibition) {
         <textarea id="exhibition-description-ar" rows="3" dir="rtl">${isEdit ? exhibition.description.ar : ''}</textarea>
       </div>
       
-      <div class="form-group">
-        <label>Image (URL Storage)</label>
-        <input type="text" id="exhibition-image" value="${isEdit ? exhibition.image : ''}" required>
-        <small style="color: #6c757d;">Utilisez le navigateur de médias pour copier l'URL</small>
-      </div>
+      ${renderImagePicker({
+        id: 'exhibition-image',
+        label: 'Image de l\'exposition',
+        currentValue: isEdit ? exhibition.image : ''
+      })}
       
       <button type="submit" class="btn btn-primary">💾 Enregistrer</button>
     </form>
   `;
+  
+  initImagePicker();
   
   return modalHTML;
 }
@@ -263,10 +266,11 @@ export async function showPublicationModal(db, publication) {
         <textarea id="publication-description-ar" rows="3" dir="rtl">${isEdit ? publication.description.ar : ''}</textarea>
       </div>
       
-      <div class="form-group">
-        <label>Image couverture (URL Storage)</label>
-        <input type="text" id="publication-cover" value="${isEdit ? publication.cover_image : ''}" required>
-      </div>
+      ${renderImagePicker({
+        id: 'publication-cover',
+        label: 'Image de couverture',
+        currentValue: isEdit ? publication.cover_image : ''
+      })}
       
       <div class="form-group">
         <label>Lien externe</label>
@@ -276,6 +280,8 @@ export async function showPublicationModal(db, publication) {
       <button type="submit" class="btn btn-primary">💾 Enregistrer</button>
     </form>
   `;
+  
+  initImagePicker();
   
   return modalHTML;
 }
@@ -400,14 +406,17 @@ export async function showCollaborationModal(db, collaboration) {
         <textarea id="collaboration-description-ar" rows="3" dir="rtl">${isEdit ? collaboration.description.ar : ''}</textarea>
       </div>
       
-      <div class="form-group">
-        <label>Logo (URL Storage)</label>
-        <input type="text" id="collaboration-logo" value="${isEdit ? collaboration.logo_image : ''}" required>
-      </div>
+      ${renderImagePicker({
+        id: 'collaboration-logo',
+        label: 'Logo de l\'organisation',
+        currentValue: isEdit ? collaboration.logo_image : ''
+      })}
       
       <button type="submit" class="btn btn-primary">💾 Enregistrer</button>
     </form>
   `;
+  
+  initImagePicker();
   
   return modalHTML;
 }
