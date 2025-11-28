@@ -5,7 +5,8 @@
 
 import { getStorage, ref, uploadBytes, getDownloadURL, deleteObject } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-storage.js';
 import { getFirestore, collection, getDocs, doc, setDoc, deleteDoc } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
-import { extractStoragePath } from './storage-helpers.js';
+import { extractStoragePath, pathToUrl } from './storage-helpers.js';
+import { storage } from './firebase-init.js';
 
 export let currentGalleryPhotos = [];
 
@@ -330,3 +331,25 @@ window.confirmGalleryPhotosSelection = function() {
     showToast(`✅ ${count} photo(s) ajoutée(s)`);
   });
 };
+
+
+/**
+ * Charger les previews des photos (convertir chemins en URLs)
+ */
+export async function loadPhotosPreviews() {
+  const photoItems = document.querySelectorAll('.photo-item img');
+  
+  for (const img of photoItems) {
+    const src = img.getAttribute('src');
+    
+    // Si c'est un chemin relatif (pas http), convertir en URL Firebase
+    if (src && !src.startsWith('http') && !src.startsWith('data:')) {
+      try {
+        const url = await pathToUrl(src, storage);
+        img.src = url;
+      } catch (error) {
+        console.error('Erreur chargement preview photo:', src, error);
+      }
+    }
+  }
+}

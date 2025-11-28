@@ -4,6 +4,8 @@
 
 import { getFirestore, collection, getDocs, doc, getDoc, setDoc, deleteDoc, serverTimestamp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
 import { renderImagePicker, initImagePicker } from './image-picker.js';
+import { storage } from './firebase-init.js';
+import { pathToUrl } from './storage-helpers.js';
 
 // ============================================
 // EXHIBITIONS
@@ -50,6 +52,30 @@ function renderExhibitionItem(expo) {
       </div>
     </li>
   `;
+}
+
+/**
+ * Convertir tous les chemins relatifs en URLs Firebase pour affichage admin
+ */
+async function loadImagePreviews() {
+  const pickers = document.querySelectorAll('.image-picker');
+  
+  for (const picker of pickers) {
+    const img = picker.querySelector('.image-preview');
+    if (img && img.src) {
+      const src = img.getAttribute('src');
+      
+      // Si c'est un chemin relatif (pas http), convertir en URL Firebase
+      if (src && !src.startsWith('http') && !src.startsWith('data:')) {
+        try {
+          const url = await pathToUrl(src, storage);
+          img.src = url;
+        } catch (error) {
+          console.error('Erreur chargement preview:', src, error);
+        }
+      }
+    }
+  }
 }
 
 export async function showExhibitionModal(db, exhibition) {

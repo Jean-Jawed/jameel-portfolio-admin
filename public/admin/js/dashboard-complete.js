@@ -11,10 +11,11 @@ import { ref, uploadBytes, getDownloadURL } from 'https://www.gstatic.com/fireba
 import { auth, db, storage } from './firebase-init.js';
 
 // Modules
-import { loadGalleryPhotos, renderPhotosSection, initPhotosHandlers, saveGalleryPhotos } from './photos-manager.js';
+import { loadGalleryPhotos, renderPhotosSection, initPhotosHandlers, saveGalleryPhotos, loadPhotosPreviews } from './photos-manager.js';
 import { loadExhibitions, showExhibitionModal, saveExhibition, deleteExhibition, loadPublications, showPublicationModal, savePublication, deletePublication, loadCollaborations, showCollaborationModal, saveCollaboration, deleteCollaboration } from './crud-modules.js';
 import { loadMedia, initMediaUpload } from './media-browser.js';
 import { renderImagePicker, initImagePicker } from './image-picker.js';
+import { pathToUrl } from './storage-helpers.js';
 
 // Check auth
 onAuthStateChanged(auth, (user) => {
@@ -90,7 +91,7 @@ async function loadDashboard() {
   
   contentArea.innerHTML = `
     <div class="section-header">
-      <h1>Tableau de bord</h1>
+      <h1>Tableau de bord - Portfolio Jameel</h1>
     </div>
     
     <div class="stats-grid">
@@ -284,6 +285,9 @@ async function loadSettings() {
   
   // Init ImagePicker handlers
   initImagePicker();
+  
+  // Charger les previews des images existantes
+  await loadImagePreviews();
 }
 
 async function saveSettings() {
@@ -406,6 +410,30 @@ window.editGallery = async function(id) {
   
   showGalleryModal(gallery);
 };
+
+/**
+ * Convertir tous les chemins relatifs en URLs Firebase pour affichage admin
+ */
+async function loadImagePreviews() {
+  const pickers = document.querySelectorAll('.image-picker');
+  
+  for (const picker of pickers) {
+    const img = picker.querySelector('.image-preview');
+    if (img && img.src) {
+      const src = img.getAttribute('src');
+      
+      // Si c'est un chemin relatif (pas http), convertir en URL Firebase
+      if (src && !src.startsWith('http') && !src.startsWith('data:')) {
+        try {
+          const url = await pathToUrl(src, storage);
+          img.src = url;
+        } catch (error) {
+          console.error('Erreur chargement preview:', src, error);
+        }
+      }
+    }
+  }
+}
 
 async function showGalleryModal(gallery) {
   const isEdit = !!gallery;
@@ -554,6 +582,10 @@ async function showGalleryModal(gallery) {
   initPhotosHandlers(storage, galleryId);
   initImagePicker();
   
+  // Charger les previews des images existantes
+  await loadImagePreviews(); // ImagePicker (cover)
+  await loadPhotosPreviews(); // Photos galeries
+  
   // Auto-generate slugs
   document.getElementById('gallery-title-fr').addEventListener('input', (e) => {
     const slug = generateSlug(e.target.value);
@@ -648,8 +680,9 @@ function generateSlug(text) {
 // ============================================
 
 window.createExhibition = function() {
-  showExhibitionModal(db, null).then(html => {
+  showExhibitionModal(db, null).then(async html => {
     showModal(html);
+    await loadImagePreviews(); // Charger previews
     document.getElementById('exhibition-form').addEventListener('submit', async (e) => {
       e.preventDefault();
       const success = await saveExhibition(db);
@@ -667,6 +700,7 @@ window.editExhibition = async function(id) {
   
   const html = await showExhibitionModal(db, exhibition);
   showModal(html);
+  await loadImagePreviews(); // Charger previews
   document.getElementById('exhibition-form').addEventListener('submit', async (e) => {
     e.preventDefault();
     const success = await saveExhibition(db);
@@ -689,8 +723,9 @@ window.deleteExhibition = async function(id, title) {
 // ============================================
 
 window.createPublication = function() {
-  showPublicationModal(db, null).then(html => {
+  showPublicationModal(db, null).then(async html => {
     showModal(html);
+    await loadImagePreviews(); // Charger previews
     document.getElementById('publication-form').addEventListener('submit', async (e) => {
       e.preventDefault();
       const success = await savePublication(db);
@@ -708,6 +743,7 @@ window.editPublication = async function(id) {
   
   const html = await showPublicationModal(db, publication);
   showModal(html);
+  await loadImagePreviews(); // Charger previews
   document.getElementById('publication-form').addEventListener('submit', async (e) => {
     e.preventDefault();
     const success = await savePublication(db);
@@ -730,8 +766,9 @@ window.deletePublication = async function(id, title) {
 // ============================================
 
 window.createCollaboration = function() {
-  showCollaborationModal(db, null).then(html => {
+  showCollaborationModal(db, null).then(async html => {
     showModal(html);
+    await loadImagePreviews(); // Charger previews
     document.getElementById('collaboration-form').addEventListener('submit', async (e) => {
       e.preventDefault();
       const success = await saveCollaboration(db);
@@ -749,6 +786,7 @@ window.editCollaboration = async function(id) {
   
   const html = await showCollaborationModal(db, collaboration);
   showModal(html);
+  await loadImagePreviews(); // Charger previews
   document.getElementById('collaboration-form').addEventListener('submit', async (e) => {
     e.preventDefault();
     const success = await saveCollaboration(db);
