@@ -511,8 +511,8 @@ async function showGalleryModal(gallery) {
       
       <h3 style="margin-top: 2rem; margin-bottom: 1rem;">Options</h3>
       
-      <div class="form-group">
-        <label style="display: flex; align-items: center; gap: 10px;">
+      <div class="form-group-inline">
+        <label>
           <input type="checkbox" id="gallery-show-video" ${isEdit && gallery.show_video ? 'checked' : ''}>
           <span>Afficher une vidéo</span>
         </label>
@@ -523,8 +523,8 @@ async function showGalleryModal(gallery) {
         <input type="url" id="gallery-video-url" value="${isEdit && gallery.video_url ? gallery.video_url : ''}">
       </div>
       
-      <div class="form-group">
-        <label style="display: flex; align-items: center; gap: 10px;">
+      <div class="form-group-inline">
+        <label>
           <input type="checkbox" id="gallery-show-map" ${isEdit && gallery.show_map ? 'checked' : ''}>
           <span>Afficher une carte</span>
         </label>
