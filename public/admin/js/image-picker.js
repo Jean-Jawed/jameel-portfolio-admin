@@ -4,6 +4,7 @@
 
 import { ref, uploadBytes, getDownloadURL } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-storage.js';
 import { storage } from './firebase-init.js';
+import { extractStoragePath } from './storage-helpers.js';
 
 /**
  * Render ImagePicker HTML
@@ -60,12 +61,18 @@ export function initImagePicker() {
         // Upload to Storage
         const timestamp = Date.now();
         const filename = file.name.replace(/[^a-zA-Z0-9.]/g, '_');
-        const storageRef = ref(storage, `images/${timestamp}_${filename}`);
+        const storagePath = `images/${timestamp}_${filename}`;
+        const storageRef = ref(storage, storagePath);
         await uploadBytes(storageRef, file);
-        const url = await getDownloadURL(storageRef);
         
-        // Update picker
-        updateImagePicker(pickerId, url);
+        // Récupérer URL complète (pour vérification)
+        const fullUrl = await getDownloadURL(storageRef);
+        
+        // Extraire chemin relatif pour stockage Firestore
+        const relativePath = extractStoragePath(fullUrl);
+        
+        // Update picker avec chemin relatif
+        updateImagePicker(pickerId, relativePath);
         
         showToast('✅ Image uploadée');
       } catch (error) {
@@ -119,7 +126,9 @@ export function updateImagePicker(pickerId, imageUrl) {
  */
 window.selectImageFromBrowser = function(imageUrl) {
   if (window.activeImagePicker) {
-    updateImagePicker(window.activeImagePicker, imageUrl);
+    // Extraire chemin relatif si c'est une URL complète
+    const relativePath = extractStoragePath(imageUrl);
+    updateImagePicker(window.activeImagePicker, relativePath);
     hideModal();
     showToast('✅ Image sélectionnée');
     window.activeImagePicker = null;

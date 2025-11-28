@@ -5,6 +5,7 @@
 
 import { getStorage, ref, uploadBytes, getDownloadURL, deleteObject } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-storage.js';
 import { getFirestore, collection, getDocs, doc, setDoc, deleteDoc } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
+import { extractStoragePath } from './storage-helpers.js';
 
 export let currentGalleryPhotos = [];
 
@@ -104,15 +105,19 @@ export function initPhotosHandlers(storage, galleryId) {
     for (const file of files) {
       // Upload vers Storage
       const filename = `${Date.now()}_${file.name}`;
-      const storageRef = ref(storage, `images/galleries/${galleryId}/${filename}`);
+      const storagePath = `images/galleries/${galleryId}/${filename}`;
+      const storageRef = ref(storage, storagePath);
       
       try {
         await uploadBytes(storageRef, file);
-        const url = await getDownloadURL(storageRef);
+        const fullUrl = await getDownloadURL(storageRef);
+        
+        // Extraire chemin relatif pour Firestore
+        const relativePath = extractStoragePath(fullUrl);
         
         // Ajouter à la preview
         const photoData = {
-          image_url: url,
+          image_url: relativePath,  // ← Chemin relatif au lieu de URL complète
           caption: { fr: '', en: '', ar: '' },
           id: `photo_${Date.now()}`
         };
@@ -292,14 +297,16 @@ window.confirmGalleryPhotosSelection = function() {
   const count = window.selectedGalleryPhotos.length;
   
   // Import currentGalleryPhotos depuis le module
-  import('./photos-manager.js').then(module => {
+  import('./photos-manager.js').then(async module => {
     const photos = module.currentGalleryPhotos;
+    const { extractStoragePath } = await import('./storage-helpers.js');
     
     // Ajouter chaque photo sélectionnée
     window.selectedGalleryPhotos.forEach(url => {
       const timestamp = Date.now();
+      const relativePath = extractStoragePath(url);  // ← Extraire chemin relatif
       const newPhoto = {
-        image_url: url,
+        image_url: relativePath,  // ← Stocker chemin relatif
         caption: { fr: '', en: '', ar: '' },
         order: photos.length,
         tempId: `temp-${timestamp}-${Math.random()}`
