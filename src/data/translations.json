@@ -1,0 +1,184 @@
+{
+  "nav": {
+    "galleries": {
+      "fr": "Galeries",
+      "en": "Galleries",
+      "ar": "المعارض"
+    },
+    "about": {
+      "fr": "À propos",
+      "en": "About",
+      "ar": "حول"
+    },
+    "contact": {
+      "fr": "Contact",
+      "en": "Contact",
+      "ar": "اتصل"
+    }
+  },
+  "home": {
+    "latest_work": {
+      "fr": "Derniers travaux",
+      "en": "Latest work",
+      "ar": "أحدث الأعمال"
+    },
+    "view_all_galleries": {
+      "fr": "Toutes les galeries",
+      "en": "All galleries",
+      "ar": "جميع المعارض"
+    }
+  },
+  "gallery": {
+    "back_to_galleries": {
+      "fr": "Retour aux galeries",
+      "en": "Back to galleries",
+      "ar": "العودة إلى المعارض"
+    },
+    "view_gallery": {
+      "fr": "Voir la galerie",
+      "en": "View gallery",
+      "ar": "عرض المعرض"
+    },
+    "documentary": {
+      "fr": "Documentaire",
+      "en": "Documentary",
+      "ar": "وثائقي"
+    },
+    "location": {
+      "fr": "Localisation",
+      "en": "Location",
+      "ar": "الموقع"
+    }
+  },
+  "about": {
+    "title": {
+      "fr": "À propos de Jameel",
+      "en": "About Jameel",
+      "ar": "حول جميل"
+    },
+    "biography": {
+      "fr": "Biographie",
+      "en": "Biography",
+      "ar": "السيرة الذاتية"
+    },
+    "interview": {
+      "fr": "Interview",
+      "en": "Interview",
+      "ar": "مقابلة"
+    },
+    "past_exhibitions": {
+      "fr": "Expositions passées",
+      "en": "Past exhibitions",
+      "ar": "المعارض السابقة"
+    },
+    "upcoming_exhibitions": {
+      "fr": "Expositions à venir",
+      "en": "Upcoming exhibitions",
+      "ar": "المعارض القادمة"
+    },
+    "press_publications": {
+      "fr": "Presse et publications",
+      "en": "Press and publications",
+      "ar": "الصحافة والمنشورات"
+    },
+    "collaborations": {
+      "fr": "Collaborations",
+      "en": "Collaborations",
+      "ar": "التعاونات"
+    },
+    "view_publication": {
+      "fr": "Voir la publication",
+      "en": "View publication",
+      "ar": "عرض المنشور"
+    }
+  },
+  "contact": {
+    "title": {
+      "fr": "Contact",
+      "en": "Contact",
+      "ar": "اتصل"
+    },
+    "send_message": {
+      "fr": "Envoyez-moi un message",
+      "en": "Send me a message",
+      "ar": "أرسل لي رسالة"
+    },
+    "professional_info": {
+      "fr": "Informations professionnelles",
+      "en": "Professional information",
+      "ar": "المعلومات المهنية"
+    },
+    "name": {
+      "fr": "Nom",
+      "en": "Name",
+      "ar": "الاسم"
+    },
+    "email": {
+      "fr": "Email",
+      "en": "Email",
+      "ar": "البريد الإلكتروني"
+    },
+    "subject": {
+      "fr": "Sujet",
+      "en": "Subject",
+      "ar": "الموضوع"
+    },
+    "message": {
+      "fr": "Message",
+      "en": "Message",
+      "ar": "الرسالة"
+    },
+    "send": {
+      "fr": "Envoyer",
+      "en": "Send",
+      "ar": "إرسال"
+    },
+    "phone": {
+      "fr": "Téléphone",
+      "en": "Phone",
+      "ar": "الهاتف"
+    },
+    "follow_me": {
+      "fr": "Suivez-moi",
+      "en": "Follow me",
+      "ar": "تابعني"
+    },
+    "sending": {
+      "fr": "Envoi en cours...",
+      "en": "Sending...",
+      "ar": "جارٍ الإرسال..."
+    },
+    "success": {
+      "fr": "Votre message a été envoyé avec succès !",
+      "en": "Your message has been sent successfully!",
+      "ar": "تم إرسال رسالتك بنجاح!"
+    },
+    "error": {
+      "fr": "Une erreur est survenue. Veuillez réessayer.",
+      "en": "An error occurred. Please try again.",
+      "ar": "حدث خطأ. يرجى المحاولة مرة أخرى."
+    }
+  },
+  "footer": {
+    "all_rights_reserved": {
+      "fr": "Tous droits réservés",
+      "en": "All rights reserved",
+      "ar": "جميع الحقوق محفوظة"
+    },
+    "navigation": {
+      "fr": "Navigation",
+      "en": "Navigation",
+      "ar": "التنقل"
+    },
+    "follow_me": {
+      "fr": "Suivez-moi",
+      "en": "Follow me",
+      "ar": "تابعني"
+    },
+    "home": {
+      "fr": "Accueil",
+      "en": "Home",
+      "ar": "الصفحة الرئيسية"
+    }
+  }
+}

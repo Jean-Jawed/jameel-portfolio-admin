@@ -1,0 +1,68 @@
+{{HEADER}}
+  
+  <section class="hero-section">
+    <img src="../{{HERO_IMAGE}}" alt="{{PHOTOGRAPHER_NAME}} - Photographe documentaire">
+    <div class="hero-overlay"></div>
+    <div class="hero-content fade-in">
+      <h1>{{HERO_TITLE}}</h1>
+      <p>{{HERO_SUBTITLE}}</p>
+      <a href="galeries.html" class="btn btn-primary">{{HERO_CTA}}</a>
+    </div>
+    <button class="scroll-down">
+      <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+      </svg>
+    </button>
+  </section>
+  
+  <section id="content" class="py-12 bg-white">
+    <div class="container-custom">
+      <div class="swiper carousel-swiper" style="height: 60vh; border-radius: 0.5rem; overflow: hidden;">
+        <div class="swiper-wrapper">
+          {{CAROUSEL_SLIDES}}
+        </div>
+        <div class="swiper-pagination"></div>
+        <div class="swiper-button-prev"></div>
+        <div class="swiper-button-next"></div>
+      </div>
+    </div>
+  </section>
+  
+  <section class="py-16 bg-gray-50">
+    <div class="container-custom">
+      <h2 class="text-3xl text-center mb-10 slide-up">Derniers travaux</h2>
+      <div class="gallery-grid">
+        {{FEATURED_GALLERIES}}
+      </div>
+      <div class="text-center mt-12">
+        <a href="galeries.html" class="btn btn-outline">Toutes les galeries</a>
+      </div>
+    </div>
+  </section>
+
+{{FOOTER}}
+
+{{MOBILE_MENU}}
+
+  <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+  <script>
+    const swiper = new Swiper('.carousel-swiper', {
+      effect: 'fade',
+      autoplay: {
+        delay: 5000,
+        disableOnInteraction: false,
+      },
+      pagination: {
+        el: '.swiper-pagination',
+        clickable: true,
+      },
+      navigation: {
+        nextEl: '.swiper-button-next',
+        prevEl: '.swiper-button-prev',
+      },
+      loop: true,
+    });
+  </script>
+  <script src="../js/menu.js"></script>
+</body>
+</html>

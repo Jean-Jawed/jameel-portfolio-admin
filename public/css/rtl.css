@@ -1,0 +1,91 @@
+/* RTL (Right-to-Left) Styles for Arabic */
+
+html[lang="ar"] {
+  direction: rtl;
+}
+
+html[lang="ar"] body {
+  font-family: 'Noto Sans Arabic', 'Arial', sans-serif;
+  text-align: right;
+}
+
+/* Navigation */
+html[lang="ar"] nav ul {
+  flex-direction: row-reverse;
+}
+
+html[lang="ar"] .nav-link::after {
+  left: auto;
+  right: 0;
+}
+
+html[lang="ar"] .lang-selector {
+  flex-direction: row-reverse;
+}
+
+/* Gallery Cards */
+html[lang="ar"] .gallery-card-overlay {
+  text-align: right;
+}
+
+/* Back Link */
+html[lang="ar"] .back-link {
+  flex-direction: row-reverse;
+}
+
+html[lang="ar"] .back-link:hover {
+  gap: 0.75rem;
+}
+
+/* Contact Info */
+html[lang="ar"] .contact-info-item {
+  flex-direction: row-reverse;
+  text-align: right;
+}
+
+/* Social Links */
+html[lang="ar"] .social-links {
+  flex-direction: row-reverse;
+}
+
+/* Footer */
+html[lang="ar"] .footer-grid {
+  direction: rtl;
+}
+
+html[lang="ar"] .footer-nav {
+  text-align: right;
+}
+
+/* Card Links */
+html[lang="ar"] .card-link {
+  flex-direction: row-reverse;
+}
+
+html[lang="ar"] .card-link:hover {
+  gap: 0.75rem;
+}
+
+/* Bio Grid */
+html[lang="ar"] .bio-grid {
+  direction: rtl;
+}
+
+html[lang="ar"] .bio-text {
+  text-align: right;
+}
+
+/* Forms */
+html[lang="ar"] .form-label {
+  text-align: right;
+}
+
+html[lang="ar"] .form-input,
+html[lang="ar"] .form-textarea {
+  text-align: right;
+}
+
+/* Mobile Menu */
+html[lang="ar"] .mobile-menu nav ul {
+  align-items: flex-end;
+}

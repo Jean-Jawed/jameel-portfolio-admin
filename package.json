@@ -1,0 +1,15 @@
+{
+  "name": "jameel-portfolio",
+  "version": "1.0.0",
+  "description": "Portfolio Jameel Subay - Photographe documentaire",
+  "scripts": {
+    "init": "node init-firebase.js",
+    "build": "node build/build.js",
+    "dev": "node build/dev-server.js"
+  },
+  "dependencies": {
+    "firebase": "^10.7.1",
+    "sharp": "^0.33.0"
+  },
+  "devDependencies": {}
+}

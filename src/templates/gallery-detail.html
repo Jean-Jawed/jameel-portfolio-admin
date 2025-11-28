@@ -1,0 +1,38 @@
+{{HEADER}}
+
+  <section class="gallery-hero">
+    <img src="../../{{GALLERY_COVER}}" alt="{{GALLERY_TITLE}}">
+    <div class="hero-overlay"></div>
+    <h1>{{GALLERY_TITLE}}</h1>
+  </section>
+
+  <main class="gallery-content bg-white">
+    <div class="container-custom">
+      <a href="../galeries.html" class="back-link">
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <line x1="19" y1="12" x2="5" y2="12"></line>
+          <polyline points="12 19 5 12 12 5"></polyline>
+        </svg>
+        Retour aux galeries
+      </a>
+      
+      <div class="gallery-description">
+        <p>{{GALLERY_DESCRIPTION}}</p>
+      </div>
+      
+      <div class="gallery-images">
+        {{GALLERY_PHOTOS}}
+      </div>
+
+      {{GALLERY_VIDEO}}
+      {{GALLERY_MAP}}
+    </div>
+  </main>
+
+{{FOOTER}}
+
+{{MOBILE_MENU}}
+
+  <script src="../../js/menu.js"></script>
+</body>
+</html>

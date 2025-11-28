@@ -1,0 +1,48 @@
+📦 LISTE COMPLÈTE DES FICHIERS DU PROJET
+=========================================
+
+Configuration racine:
+├── package.json
+├── firebase-config.js
+├── init-firebase.js
+├── vercel.json
+├── .gitignore
+├── README.md
+└── DEMARRAGE.md
+
+Scripts de build (/build):
+├── build.js
+├── fetch-data.js
+├── render-templates.js
+└── dev-server.js
+
+Templates HTML (/src/templates):
+├── home.html
+├── galleries.html
+├── gallery-detail.html
+├── about.html
+└── contact.html
+
+Partials HTML (/src/partials):
+├── header.html
+├── footer.html
+└── mobile-menu.html
+
+Assets statiques (/public):
+├── css/
+│   ├── main.css
+│   └── rtl.css
+└── js/
+    ├── menu.js
+    └── contact.js
+
+Interface admin (/public/admin):
+├── login.html
+├── index.html
+├── css/
+│   └── admin.css
+└── js/
+    ├── auth.js
+    └── dashboard.js
+
+TOTAL: 26 fichiers

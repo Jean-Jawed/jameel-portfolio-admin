@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin - Jameel Subay</title>
+  <link rel="stylesheet" href="css/admin.css">
+</head>
+<body>
+  <div class="admin-layout">
+    <aside class="sidebar">
+      <div class="sidebar-header">
+        <h2>Admin</h2>
+        <p id="user-email"></p>
+      </div>
+      
+      <nav class="sidebar-nav">
+        <a href="#dashboard" class="nav-item active" data-section="dashboard">
+          <span>📊</span> Dashboard
+        </a>
+        <a href="#settings" class="nav-item" data-section="settings">
+          <span>⚙️</span> Paramètres
+        </a>
+        <a href="#galleries" class="nav-item" data-section="galleries">
+          <span>🖼️</span> Galeries
+        </a>
+        <a href="#exhibitions" class="nav-item" data-section="exhibitions">
+          <span>🎨</span> Expositions
+        </a>
+        <a href="#publications" class="nav-item" data-section="publications">
+          <span>📚</span> Publications
+        </a>
+        <a href="#collaborations" class="nav-item" data-section="collaborations">
+          <span>🤝</span> Collaborations
+        </a>
+        <a href="#media" class="nav-item" data-section="media">
+          <span>📁</span> Médias
+        </a>
+      </nav>
+      
+      <div class="sidebar-footer">
+        <button id="publish-btn" class="btn btn-success">🚀 Publier</button>
+        <button id="logout-btn" class="btn btn-secondary">Déconnexion</button>
+      </div>
+    </aside>
+    
+    <main class="main-content">
+      <div id="content-area">
+        <!-- Le contenu sera injecté ici -->
+      </div>
+    </main>
+  </div>
+
+  <div id="modal" class="modal">
+    <div class="modal-backdrop" onclick="hideModal()"></div>
+    <div class="modal-dialog">
+      <div class="modal-header">
+        <button class="modal-close" onclick="hideModal()">&times;</button>
+      </div>
+      <div id="modal-content"></div>
+    </div>
+  </div>
+
+  <script src="js/toast.js"></script>
+  <script type="module" src="js/dashboard-complete.js"></script>
+</body>
+</html>

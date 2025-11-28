@@ -1,0 +1,352 @@
+/**
+ * Script d'initialisation Firestore avec Firebase Client SDK
+ * Nécessite d'être connecté comme admin dans le navigateur
+ * 
+ * COMMENT UTILISER :
+ * 1. Ouvrez init.html dans votre navigateur
+ * 2. Connectez-vous avec votre compte admin
+ * 3. Cliquez sur "Initialiser la base de données"
+ */
+
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Initialisation Firestore</title>
+  <style>
+    body {
+      font-family: system-ui, -apple-system, sans-serif;
+      max-width: 800px;
+      margin: 50px auto;
+      padding: 20px;
+      background: #f5f5f5;
+    }
+    .container {
+      background: white;
+      padding: 30px;
+      border-radius: 8px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+    button {
+      background: #1a73e8;
+      color: white;
+      border: none;
+      padding: 12px 24px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 16px;
+      margin: 10px 5px;
+    }
+    button:hover { background: #1557b0; }
+    button:disabled { 
+      background: #ccc; 
+      cursor: not-allowed; 
+    }
+    #log {
+      background: #f8f9fa;
+      padding: 15px;
+      border-radius: 4px;
+      margin-top: 20px;
+      max-height: 400px;
+      overflow-y: auto;
+      font-family: monospace;
+      font-size: 14px;
+      line-height: 1.6;
+    }
+    .success { color: #0f9d58; }
+    .error { color: #d93025; }
+    .info { color: #1a73e8; }
+    #auth-section { display: none; }
+    #init-section { display: none; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>🗄️ Initialisation Firestore</h1>
+    
+    <!-- Section Authentification -->
+    <div id="auth-section">
+      <h2>Connexion Admin</h2>
+      <input type="email" id="email" placeholder="Email" style="width: 100%; padding: 10px; margin-bottom: 10px;">
+      <input type="password" id="password" placeholder="Mot de passe" style="width: 100%; padding: 10px; margin-bottom: 10px;">
+      <button onclick="login()">Se connecter</button>
+    </div>
+
+    <!-- Section Initialisation -->
+    <div id="init-section">
+      <p>✅ Connecté en tant que : <strong id="user-email"></strong></p>
+      <button onclick="initializeDatabase()">🚀 Initialiser la base de données</button>
+      <button onclick="resetDatabase()" style="background: #d93025;">🗑️ Réinitialiser (DANGER)</button>
+      <button onclick="logout()">🚪 Déconnexion</button>
+    </div>
+
+    <!-- Log -->
+    <div id="log"></div>
+  </div>
+
+  <!-- Firebase SDK -->
+  <script type="module">
+    import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
+    import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
+    import { getFirestore, collection, doc, setDoc, deleteDoc, getDocs, serverTimestamp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
+
+    // ============================================
+    // CONFIGURATION FIREBASE
+    // ============================================
+    const firebaseConfig = {
+      apiKey: "AIzaSyD4W5XqKTVFsMpjINwzmCZD-zTui1IcdRo",
+      authDomain: "rola-portfolio.firebaseapp.com",
+      projectId: "rola-portfolio",
+      storageBucket: "rola-portfolio.firebasestorage.app",
+      messagingSenderId: "322391245856",
+      appId: "1:322391245856:web:82af28c9c84babe140a845"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+
+    // Rendre disponible globalement
+    window.auth = auth;
+    window.db = db;
+    window.signInWithEmailAndPassword = signInWithEmailAndPassword;
+    window.signOut = signOut;
+    window.collection = collection;
+    window.doc = doc;
+    window.setDoc = setDoc;
+    window.deleteDoc = deleteDoc;
+    window.getDocs = getDocs;
+    window.serverTimestamp = serverTimestamp;
+
+    // Observer l'état de connexion
+    onAuthStateChanged(auth, (user) => {
+      if (user) {
+        document.getElementById('auth-section').style.display = 'none';
+        document.getElementById('init-section').style.display = 'block';
+        document.getElementById('user-email').textContent = user.email;
+        log('✅ Connecté', 'success');
+      } else {
+        document.getElementById('auth-section').style.display = 'block';
+        document.getElementById('init-section').style.display = 'none';
+      }
+    });
+  </script>
+
+  <script>
+    // ============================================
+    // FONCTIONS D'AUTHENTIFICATION
+    // ============================================
+    async function login() {
+      const email = document.getElementById('email').value;
+      const password = document.getElementById('password').value;
+      
+      try {
+        await signInWithEmailAndPassword(auth, email, password);
+        log('✅ Connexion réussie', 'success');
+      } catch (error) {
+        log('❌ Erreur de connexion: ' + error.message, 'error');
+      }
+    }
+
+    async function logout() {
+      await signOut(auth);
+      document.getElementById('log').innerHTML = '';
+      log('👋 Déconnecté', 'info');
+    }
+
+    // ============================================
+    // DONNÉES INITIALES
+    // ============================================
+    const initialData = {
+      settings: {
+        photographer: {
+          name: 'Jameel Subay',
+          tagline: {
+            fr: 'Photographe documentaire',
+            en: 'Documentary Photographer',
+            ar: 'مصور وثائقي'
+          },
+          email: 'contact@jameelsubay.com',
+          phone: '+33 6 51 75 72 47',
+          profile_image: 'images/Jameel.jpg',
+          interview_video_url: 'https://www.youtube.com/embed/8EvMg48Dqko',
+          social: {
+            instagram: 'https://www.instagram.com/jameelsubay',
+            facebook: '',
+            twitter: ''
+          }
+        },
+        homepage: {
+          hero_image: 'images/main.JPG',
+          hero_title: { fr: 'Jameel Subay', en: 'Jameel Subay', ar: 'جميل صباي' },
+          carousel: [
+            { image: 'images/caroussel1.JPG' },
+            { image: 'images/caroussel2.JPG' },
+            { image: 'images/caroussel3.JPG' }
+          ],
+          featured_galleries: ['corne-de-afrique', 'printemps-arabe', 'minorites-juives']
+        },
+        contact: {
+          formspree_endpoint: 'https://formspree.io/f/mwpbwbaw'
+        }
+      },
+      
+      galleries: {
+        'corne-de-afrique': {
+          slug: { fr: 'corne-de-afrique', en: 'horn-of-africa', ar: 'القرن-الأفريقي' },
+          title: { fr: 'Corne de l\'Afrique', en: 'Horn of Africa', ar: 'القرن الأفريقي' },
+          description_short: { 
+            fr: 'Une exploration photographique des pays de la Corne de l\'Afrique.',
+            en: 'A photographic exploration of the Horn of Africa.',
+            ar: 'استكشاف فوتوغرافي للقرن الأفريقي'
+          },
+          cover_image: 'images/CorneCover.JPG',
+          status: 'published',
+          order: 1
+        },
+        'printemps-arabe': {
+          slug: { fr: 'printemps-arabe', en: 'arab-spring', ar: 'الربيع-العربي' },
+          title: { fr: 'Printemps Arabe', en: 'Arab Spring', ar: 'الربيع العربي' },
+          description_short: { 
+            fr: 'Un témoignage visuel des mouvements populaires.',
+            en: 'A visual testimony of popular movements.',
+            ar: 'شهادة بصرية على الحركات الشعبية'
+          },
+          cover_image: 'images/Printemps.JPG',
+          status: 'published',
+          order: 2
+        },
+        'minorites-juives': {
+          slug: { fr: 'minorites-juives', en: 'jewish-minorities', ar: 'الأقليات-اليهودية' },
+          title: { fr: 'Minorités juives', en: 'Jewish Minorities', ar: 'الأقليات اليهودية' },
+          description_short: { 
+            fr: 'Un regard intime sur les communautés juives.',
+            en: 'An intimate look at Jewish communities.',
+            ar: 'نظرة حميمة على المجتمعات اليهودية'
+          },
+          cover_image: 'images/Juives.JPG',
+          status: 'published',
+          order: 3
+        }
+      },
+
+      exhibitions: {
+        'visages-du-yemen': {
+          type: 'past',
+          title: { fr: 'Visages du Yémen', en: 'Faces of Yemen', ar: 'وجوه اليمن' },
+          location: { fr: 'Institut du Monde Arabe, Paris', en: 'Arab World Institute, Paris' },
+          year: '2020',
+          description: { fr: 'Une exposition solo...', en: 'A solo exhibition...' },
+          image: 'https://images.unsplash.com/photo-1531058020387-3be344556be6?w=800',
+          order: 1
+        }
+      },
+
+      publications: {
+        'paris-match-2013': {
+          title: { fr: 'Dans l\'enfer de Haradh', en: 'In the hell of Haradh' },
+          publisher: 'Paris Match',
+          year: '2013',
+          cover_image: 'images/ParisMatch.png',
+          external_url: 'https://www.parismatch.com/Actu/International/Dans-l-enfer-de-Haradh-518828',
+          order: 1
+        }
+      }
+    };
+
+    // ============================================
+    // INITIALISATION
+    // ============================================
+    async function initializeDatabase() {
+      log('🚀 Début de l\'initialisation...', 'info');
+      const startTime = Date.now();
+
+      try {
+        // Settings
+        log('📝 Création des paramètres globaux...');
+        await setDoc(doc(db, 'settings', 'global'), {
+          ...initialData.settings,
+          created_at: serverTimestamp(),
+          updated_at: serverTimestamp()
+        });
+        log('✅ Paramètres créés', 'success');
+
+        // Galleries
+        log('🖼️  Création des galeries...');
+        for (const [id, data] of Object.entries(initialData.galleries)) {
+          await setDoc(doc(db, 'galleries', id), {
+            ...data,
+            created_at: serverTimestamp(),
+            updated_at: serverTimestamp()
+          });
+          log(`  ✓ ${data.title.fr}`, 'success');
+        }
+
+        // Exhibitions
+        log('🎨 Création des expositions...');
+        for (const [id, data] of Object.entries(initialData.exhibitions)) {
+          await setDoc(doc(db, 'exhibitions', id), {
+            ...data,
+            created_at: serverTimestamp()
+          });
+          log(`  ✓ ${data.title.fr}`, 'success');
+        }
+
+        // Publications
+        log('📚 Création des publications...');
+        for (const [id, data] of Object.entries(initialData.publications)) {
+          await setDoc(doc(db, 'publications', id), {
+            ...data,
+            created_at: serverTimestamp()
+          });
+          log(`  ✓ ${data.title.fr}`, 'success');
+        }
+
+        const duration = ((Date.now() - startTime) / 1000).toFixed(2);
+        log(`\n🎉 TERMINÉ en ${duration}s !`, 'success');
+        
+      } catch (error) {
+        log('❌ ERREUR: ' + error.message, 'error');
+      }
+    }
+
+    // ============================================
+    // RESET DATABASE
+    // ============================================
+    async function resetDatabase() {
+      if (!confirm('⚠️ ATTENTION ! Cela va SUPPRIMER toutes les données. Continuer ?')) {
+        return;
+      }
+
+      log('🗑️  Suppression en cours...', 'info');
+
+      try {
+        const collections = ['settings', 'galleries', 'exhibitions', 'publications', 'collaborations'];
+        
+        for (const collectionName of collections) {
+          const snapshot = await getDocs(collection(db, collectionName));
+          for (const document of snapshot.docs) {
+            await deleteDoc(document.ref);
+          }
+          log(`  ✓ ${collectionName} supprimée`, 'success');
+        }
+
+        log('✅ Base de données réinitialisée', 'success');
+      } catch (error) {
+        log('❌ Erreur: ' + error.message, 'error');
+      }
+    }
+
+    // ============================================
+    // LOGGING
+    // ============================================
+    function log(message, type = 'info') {
+      const logDiv = document.getElementById('log');
+      const time = new Date().toLocaleTimeString();
+      logDiv.innerHTML += `<div class="${type}">[${time}] ${message}</div>`;
+      logDiv.scrollTop = logDiv.scrollHeight;
+    }
+  </script>
+</body>
+</html>
