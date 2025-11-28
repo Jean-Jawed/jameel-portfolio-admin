@@ -39,6 +39,13 @@ async function build() {
         copyDirectory(path.join(__dirname, '../public/css'), path.join(DIST_DIR, 'css'));
         copyDirectory(path.join(__dirname, '../public/js'), path.join(DIST_DIR, 'js'));
         copyDirectory(path.join(__dirname, '../public/admin'), path.join(DIST_DIR, 'admin'));
+        
+        // Copier les fichiers SVG à la racine de public
+        const publicDir = path.join(__dirname, '../public');
+        const svgFiles = fs.readdirSync(publicDir).filter(file => file.endsWith('.svg'));
+        svgFiles.forEach(file => {
+            fs.copyFileSync(path.join(publicDir, file), path.join(DIST_DIR, file));
+        });
         console.log('✅ Assets copiés\n');
 
         // 5. Générer les pages HTML
