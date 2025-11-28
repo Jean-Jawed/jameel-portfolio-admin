@@ -807,15 +807,24 @@ document.getElementById('publish-btn').addEventListener('click', async () => {
   const btn = document.getElementById('publish-btn');
   setLoading(btn, true, 'Publication...');
   
-  // TODO: Trigger Vercel webhook
-  // await fetch('VOTRE_WEBHOOK_URL', { method: 'POST' });
-  
-  await setDoc(doc(db, 'settings', 'global'), {
-    last_publish: serverTimestamp()
-  }, { merge: true });
-  
-  setLoading(btn, false);
-  showToast('✅ Site publié ! (webhook à configurer)');
+  try {
+    // Trigger Vercel rebuild
+    await fetch('https://api.vercel.com/v1/integrations/deploy/prj_0k6vOI9r8MIWHVdBgGlcMmvIrVn0/n9YwQUnI8l', { 
+      method: 'POST' 
+    });
+    
+    // Update last publish timestamp
+    await setDoc(doc(db, 'settings', 'global'), {
+      last_publish: serverTimestamp()
+    }, { merge: true });
+    
+    setLoading(btn, false);
+    showToast('✅ Site publié ! Déploiement en cours (2-3 min)...');
+  } catch (error) {
+    console.error('Erreur publication:', error);
+    setLoading(btn, false);
+    showToast('❌ Erreur lors de la publication', 'error');
+  }
 });
 
 // Load dashboard au démarrage

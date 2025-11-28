@@ -6,6 +6,10 @@
     {
       "source": "/",
       "destination": "/fr/index.html"
+    },
+    {
+      "source": "/admin",
+      "destination": "/admin/"
     }
   ],
   "headers": [
