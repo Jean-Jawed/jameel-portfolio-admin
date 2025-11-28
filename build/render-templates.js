@@ -103,7 +103,7 @@ function renderHome(lang, data, langDir, partials) {
     data.settings.homepage.carousel.forEach(item => {
         carouselHTML += `
           <div class="swiper-slide">
-            <img src="../${item.image}" alt="${item.caption?.[lang] || ''}" style="width: 100%; height: 100%; object-fit: cover;">
+            <img src="/${item.image}" alt="${item.caption?.[lang] || ''}" style="width: 100%; height: 100%; object-fit: cover;">
           </div>`;
     });
     html = html.replace('{{CAROUSEL_SLIDES}}', carouselHTML);
@@ -117,7 +117,7 @@ function renderHome(lang, data, langDir, partials) {
         featuredHTML += `
         <a href="galeries/${gallery.slug[lang]}.html" class="gallery-card">
           <div class="gallery-card-image">
-            <img src="../${gallery.cover_image}" alt="${gallery.title[lang]}">
+            <img src="/${gallery.cover_image}" alt="${gallery.title[lang]}">
           </div>
           <div class="gallery-card-overlay">
             <h3 class="gallery-card-title">${gallery.title[lang]}</h3>
@@ -144,7 +144,7 @@ function renderGalleries(lang, data, langDir, partials) {
         galleriesHTML += `
         <a href="galeries/${gallery.slug[lang]}.html" class="gallery-card">
           <div class="gallery-card-image">
-            <img src="../${gallery.cover_image}" alt="${gallery.title[lang]}">
+            <img src="/${gallery.cover_image}" alt="${gallery.title[lang]}">
           </div>
           <div class="gallery-card-overlay">
             <h3 class="gallery-card-title">${gallery.title[lang]}</h3>
@@ -176,7 +176,7 @@ function renderGalleryDetail(lang, gallery, data, langDir, partials) {
         gallery.photos.forEach(photo => {
             photosHTML += `
             <figure class="gallery-image-item">
-              <img src="../../${photo.image_url}" alt="${photo.caption?.[lang] || ''}">
+              <img src="/${photo.image_url}" alt="${photo.caption?.[lang] || ''}">
               <figcaption class="gallery-image-caption">${photo.caption?.[lang] || ''}</figcaption>
             </figure>`;
         });
