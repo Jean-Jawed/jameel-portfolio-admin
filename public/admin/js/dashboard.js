@@ -129,7 +129,7 @@ async function loadDashboard() {
   
   document.getElementById('content-area').innerHTML = `
     <div class="section-header">
-      <h1>Dashboard</h1>
+      <h1>Dashboard Portfolio Jameel</h1>
     </div>
     
     <div class="stats-grid">
