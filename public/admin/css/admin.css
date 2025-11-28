@@ -410,6 +410,10 @@ select {
   z-index: 1000;
 }
 
+#media-modal {
+  z-index: 1100; /* Au-dessus de la modal principale */
+}
+
 .modal.active {
   display: flex; /* Visible quand classe active */
 }

@@ -782,6 +782,19 @@ window.hideModal = function() {
   document.getElementById('modal').classList.remove('active');
 };
 
+// Modal Media Browser (au-dessus de la modal principale)
+window.showMediaModal = function(content) {
+  const modal = document.getElementById('media-modal');
+  const modalContent = document.getElementById('media-modal-content');
+  
+  modalContent.innerHTML = content;
+  modal.classList.add('active');
+};
+
+window.hideMediaModal = function() {
+  document.getElementById('media-modal').classList.remove('active');
+};
+
 // ============================================
 // PUBLISH
 // ============================================

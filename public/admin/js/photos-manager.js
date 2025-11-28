@@ -229,12 +229,12 @@ window.openMediaBrowserForGalleryPhotos = async function() {
     </div>
     <div style="margin-bottom: 1rem;">
       <button class="btn btn-primary" onclick="confirmGalleryPhotosSelection()">✅ Ajouter les photos sélectionnées</button>
-      <button class="btn btn-secondary" onclick="window.hideModal()">Annuler</button>
+      <button class="btn btn-secondary" onclick="window.hideMediaModal()">Annuler</button>
     </div>
     <div id="media-browser-selection"></div>
   `;
   
-  window.showModal(modalContent);
+  window.showMediaModal(modalContent);  // ← Utiliser modal dédiée
   
   // Load media in selection mode
   const container = document.getElementById('media-browser-selection');
@@ -320,8 +320,8 @@ window.confirmGalleryPhotosSelection = function() {
       preview.innerHTML = photos.map((photo, i) => module.renderPhotoItem(photo, i)).join('');
     }
     
-    // Close modal
-    window.hideModal();
+    // Close modal Media Browser SEULEMENT
+    window.hideMediaModal();  // ← Ne ferme QUE la modal Media Browser
     
     // Reset selection
     window.selectedGalleryPhotos = [];

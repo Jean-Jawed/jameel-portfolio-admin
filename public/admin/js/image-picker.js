@@ -129,7 +129,7 @@ window.selectImageFromBrowser = function(imageUrl) {
     // Extraire chemin relatif si c'est une URL complète
     const relativePath = extractStoragePath(imageUrl);
     updateImagePicker(window.activeImagePicker, relativePath);
-    hideModal();
+    hideMediaModal();  // ← Fermer SEULEMENT Media Browser
     showToast('✅ Image sélectionnée');
     window.activeImagePicker = null;
   }
@@ -146,7 +146,7 @@ async function showMediaBrowserModal() {
     <div id="media-browser-selection"></div>
   `;
   
-  showModal(modalContent);
+  showMediaModal(modalContent);  // ← Utiliser modal dédiée
   
   // Load media in selection mode
   const container = document.getElementById('media-browser-selection');

@@ -3,7 +3,6 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="icon" type="image/svg+xml" href="/favicon.svg">
   <title>Admin - Jameel Subay</title>
   <link rel="stylesheet" href="css/admin.css">
 </head>
@@ -59,6 +58,17 @@
         <button class="modal-close" onclick="hideModal()">&times;</button>
       </div>
       <div id="modal-content"></div>
+    </div>
+  </div>
+
+  <!-- Modal Media Browser (au-dessus de la modal principale) -->
+  <div id="media-modal" class="modal">
+    <div class="modal-backdrop" onclick="hideMediaModal()"></div>
+    <div class="modal-dialog">
+      <div class="modal-header">
+        <button class="modal-close" onclick="hideMediaModal()">&times;</button>
+      </div>
+      <div id="media-modal-content"></div>
     </div>
   </div>
 
