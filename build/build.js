@@ -42,8 +42,10 @@ async function build() {
         
         // Copier les fichiers SVG à la racine de public
         const publicDir = path.join(__dirname, '../public');
-        const svgFiles = fs.readdirSync(publicDir).filter(file => file.endsWith('.svg'));
-        svgFiles.forEach(file => {
+        const iconFiles = fs.readdirSync(publicDir).filter(file => 
+            file.endsWith('.svg') || file.endsWith('.ico') || file.endsWith('.png')
+        );
+        iconFiles.forEach(file => {
             fs.copyFileSync(path.join(publicDir, file), path.join(DIST_DIR, file));
         });
         console.log('✅ Assets copiés\n');
