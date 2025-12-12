@@ -359,6 +359,8 @@ function replaceLangVars(html, lang, data, pageName = 'index', gallerySlug = nul
     html = html.replace(/\{\{TRAD_FOOTER_NAV\}\}/g, t('footer.navigation', lang));
     html = html.replace(/\{\{TRAD_FOOTER_FOLLOW\}\}/g, t('footer.follow_me', lang));
     html = html.replace(/\{\{TRAD_FOOTER_HOME\}\}/g, t('footer.home', lang));
+    html = html.replace(/\{\{TRAD_FOOTER_COPYRIGHT\}\}/g, t('footer.copyright', lang));
+    html = html.replace(/\{\{TRAD_FOOTER_DESIGN_DEV\}\}/g, t('footer.design_dev', lang));
     
     return html;
 }

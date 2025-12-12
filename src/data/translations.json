@@ -179,6 +179,16 @@
       "fr": "Accueil",
       "en": "Home",
       "ar": "الصفحة الرئيسية"
+    },
+    "copyright": {
+      "fr": "Droits d'auteur",
+      "en": "Copyright",
+      "ar": "حقوق النشر"
+    },
+    "design_dev": {
+      "fr": "Conception et Développement",
+      "en": "Design and Development",
+      "ar": "التصميم والتطوير"
     }
   }
 }
