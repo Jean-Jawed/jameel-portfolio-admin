@@ -81,8 +81,9 @@ async function loadMediaRecursive(storage, folderRef, container, path, selection
  */
 function createMediaItem(url, name, fullPath, selectionMode = false) {
   if (selectionMode) {
-    // Vérifier si on est en mode sélection multiple (galerie) ou simple (ImagePicker)
+    // Vérifier si on est en mode sélection multiple (galerie) ou carrousel ou simple (ImagePicker)
     const isMultipleMode = typeof window.galleryPhotosSelectionMode !== 'undefined' && window.galleryPhotosSelectionMode;
+    const isCarouselMode = typeof window.carouselSelectionMode !== 'undefined' && window.carouselSelectionMode;
     
     if (isMultipleMode) {
       // Mode sélection multiple pour galerie
@@ -94,6 +95,19 @@ function createMediaItem(url, name, fullPath, selectionMode = false) {
           <div class="media-item-info">
             <p class="media-item-name" title="${name}">${name.length > 20 ? name.substring(0, 17) + '...' : name}</p>
             <small style="color: #28a745;">Cliquer pour sélectionner</small>
+          </div>
+        </div>
+      `;
+    } else if (isCarouselMode) {
+      // Mode sélection pour carrousel
+      return `
+        <div class="media-item media-item-selectable" onclick="selectImageForCarousel('${url}')" style="cursor: pointer;">
+          <div class="media-item-image">
+            <img src="${url}" alt="${name}" loading="lazy">
+          </div>
+          <div class="media-item-info">
+            <p class="media-item-name" title="${name}">${name.length > 20 ? name.substring(0, 17) + '...' : name}</p>
+            <small style="color: #28a745;">Cliquer pour ajouter au carrousel</small>
           </div>
         </div>
       `;

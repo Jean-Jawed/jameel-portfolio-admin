@@ -30,6 +30,9 @@ document.getElementById('logout-btn').addEventListener('click', async () => {
   window.location.href = 'login.html';
 });
 
+// Variables globales pour gestion du carrousel
+let currentCarouselSlides = [];
+
 // Navigation
 const navLinks = document.querySelectorAll('.sidebar nav a');
 const contentArea = document.getElementById('content-area');
@@ -91,7 +94,7 @@ async function loadDashboard() {
   
   contentArea.innerHTML = `
     <div class="section-header">
-      <h1>Tableau de bord - Portfolio Jameel</h1>
+      <h1>Tableau de bord</h1>
     </div>
     
     <div class="stats-grid">
@@ -277,11 +280,26 @@ async function loadSettings() {
           </label>
         `).join('')}
       </div>
+      
+      <h4 style="margin-top: 2rem; margin-bottom: 1rem;">Carrousel page d'accueil</h4>
+      <p style="color: #6c757d; margin-bottom: 1rem; font-size: 14px;">
+        Images défilantes en haut de la page d'accueil (min. 3 recommandé)
+      </p>
+      <button type="button" class="btn btn-secondary" onclick="addCarouselSlide()" style="margin-bottom: 1rem;">
+        📁 Ajouter une slide
+      </button>
+      <div id="carousel-preview" style="display: flex; flex-direction: column; gap: 15px;">
+        <!-- Slides seront rendues ici -->
+      </div>
     </div>
   `;
   
   // Event listeners
   document.getElementById('save-settings-btn').addEventListener('click', saveSettings);
+  
+  // Charger carrousel existant
+  currentCarouselSlides = data.homepage.carousel || [];
+  renderCarouselPreview();
   
   // Init ImagePicker handlers
   initImagePicker();
@@ -289,6 +307,141 @@ async function loadSettings() {
   // Charger les previews des images existantes
   await loadImagePreviews();
 }
+
+/**
+ * GESTION CARROUSEL
+ */
+
+function renderCarouselPreview() {
+  const preview = document.getElementById('carousel-preview');
+  if (!preview) return;
+  
+  if (currentCarouselSlides.length === 0) {
+    preview.innerHTML = '<p style="color: #9ca3af; font-style: italic;">Aucune slide. Cliquez sur "Ajouter une slide" pour commencer.</p>';
+    return;
+  }
+  
+  preview.innerHTML = currentCarouselSlides.map((slide, index) => renderCarouselItem(slide, index)).join('');
+  
+  // Charger previews images
+  loadCarouselPreviews();
+}
+
+function renderCarouselItem(slide, index) {
+  return `
+    <div class="carousel-slide-item" data-index="${index}" style="background: white; padding: 1rem; border-radius: 6px; border: 1px solid #e9ecef;">
+      <div style="display: grid; grid-template-columns: 200px 1fr auto; gap: 20px; align-items: start;">
+        <img src="${slide.image}" alt="Slide ${index + 1}" style="width: 200px; height: 120px; object-fit: cover; border-radius: 6px;">
+        
+        <div>
+          <div class="form-group" style="margin-bottom: 10px;">
+            <label style="font-size: 12px; font-weight: 600;">Légende FR</label>
+            <input type="text" class="carousel-caption-fr form-input" value="${slide.caption?.fr || ''}" 
+              placeholder="Légende en français" 
+              onchange="updateCarouselCaption(${index}, 'fr', this.value)">
+          </div>
+          <div class="form-group" style="margin-bottom: 10px;">
+            <label style="font-size: 12px; font-weight: 600;">Légende EN</label>
+            <input type="text" class="carousel-caption-en form-input" value="${slide.caption?.en || ''}" 
+              placeholder="Caption in English"
+              onchange="updateCarouselCaption(${index}, 'en', this.value)">
+          </div>
+          <div class="form-group" style="margin-bottom: 0;">
+            <label style="font-size: 12px; font-weight: 600;">Légende AR</label>
+            <input type="text" class="carousel-caption-ar form-input" value="${slide.caption?.ar || ''}" 
+              placeholder="التسمية التوضيحية بالعربية" dir="rtl"
+              onchange="updateCarouselCaption(${index}, 'ar', this.value)">
+          </div>
+        </div>
+        
+        <div style="display: flex; flex-direction: column; gap: 5px;">
+          <button type="button" class="btn btn-danger btn-small" onclick="removeCarouselSlide(${index})">🗑️</button>
+          <button type="button" class="btn btn-secondary btn-small" onclick="moveCarouselSlideUp(${index})" ${index === 0 ? 'disabled' : ''}>↑</button>
+          <button type="button" class="btn btn-secondary btn-small" onclick="moveCarouselSlideDown(${index})" ${index === currentCarouselSlides.length - 1 ? 'disabled' : ''}>↓</button>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+async function loadCarouselPreviews() {
+  const slides = document.querySelectorAll('.carousel-slide-item img');
+  
+  for (const img of slides) {
+    const src = img.getAttribute('src');
+    
+    if (src && !src.startsWith('http') && !src.startsWith('data:')) {
+      try {
+        const url = await pathToUrl(src, storage);
+        img.src = url;
+      } catch (error) {
+        console.error('Erreur chargement preview carrousel:', src, error);
+      }
+    }
+  }
+}
+
+window.addCarouselSlide = async function() {
+  const { loadMedia } = await import('./media-browser.js');
+  
+  const modalContent = `
+    <h2>Sélectionner une image pour le carrousel</h2>
+    <div id="media-browser-carousel"></div>
+  `;
+  
+  window.carouselSelectionMode = true;
+  showMediaModal(modalContent);
+  
+  const container = document.getElementById('media-browser-carousel');
+  await loadMedia(storage, container, true);
+};
+
+window.selectImageForCarousel = async function(imageUrl) {
+  if (!window.carouselSelectionMode) return;
+  
+  const { extractStoragePath } = await import('./storage-helpers.js');
+  const relativePath = extractStoragePath(imageUrl);
+  
+  const newSlide = {
+    image: relativePath,
+    caption: { fr: '', en: '', ar: '' }
+  };
+  
+  currentCarouselSlides.push(newSlide);
+  renderCarouselPreview();
+  hideMediaModal();
+  showToast('✅ Slide ajoutée au carrousel');
+  window.carouselSelectionMode = false;
+};
+
+window.updateCarouselCaption = function(index, lang, value) {
+  if (!currentCarouselSlides[index]) return;
+  if (!currentCarouselSlides[index].caption) {
+    currentCarouselSlides[index].caption = { fr: '', en: '', ar: '' };
+  }
+  currentCarouselSlides[index].caption[lang] = value;
+};
+
+window.removeCarouselSlide = function(index) {
+  if (!confirm('Supprimer cette slide du carrousel ?')) return;
+  currentCarouselSlides.splice(index, 1);
+  renderCarouselPreview();
+  showToast('🗑️ Slide supprimée');
+};
+
+window.moveCarouselSlideUp = function(index) {
+  if (index === 0) return;
+  [currentCarouselSlides[index - 1], currentCarouselSlides[index]] = 
+    [currentCarouselSlides[index], currentCarouselSlides[index - 1]];
+  renderCarouselPreview();
+};
+
+window.moveCarouselSlideDown = function(index) {
+  if (index === currentCarouselSlides.length - 1) return;
+  [currentCarouselSlides[index], currentCarouselSlides[index + 1]] = 
+    [currentCarouselSlides[index + 1], currentCarouselSlides[index]];
+  renderCarouselPreview();
+};
 
 async function saveSettings() {
   const btn = document.getElementById('save-settings-btn');
@@ -334,7 +487,7 @@ async function saveSettings() {
         ar: document.getElementById('hero-subtitle-ar').value
       },
       hero_cta: { fr: 'Découvrir', en: 'Discover', ar: 'اكتشف' },
-      carousel: [],
+      carousel: currentCarouselSlides,
       featured_galleries: featured
     },
     contact: {
