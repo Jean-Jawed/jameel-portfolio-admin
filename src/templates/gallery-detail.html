@@ -33,6 +33,24 @@
 
 {{MOBILE_MENU}}
 
+  <!-- Lightbox -->
+  <div id="lightbox" class="lightbox">
+    <button class="lightbox-close" onclick="closeLightbox()" aria-label="Fermer">×</button>
+    <div class="lightbox-counter"></div>
+    
+    <div class="swiper lightbox-swiper">
+      <div class="swiper-wrapper">
+        <!-- Photos injectées dynamiquement -->
+      </div>
+      <div class="swiper-button-prev"></div>
+      <div class="swiper-button-next"></div>
+    </div>
+    
+    <div class="lightbox-caption"></div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+  <script src="/js/lightbox.js"></script>
   <script src="/js/menu.js"></script>
 </body>
 </html>

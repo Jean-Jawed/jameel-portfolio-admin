@@ -845,3 +845,165 @@ footer {
 .mb-8 { margin-bottom: 2rem; }
 .mb-16 { margin-bottom: 4rem; }
 .py-24 { padding-top: 6rem; padding-bottom: 6rem; }
+
+/* ===================================
+   LIGHTBOX
+   =================================== */
+
+.lightbox {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.95);
+  z-index: 10000;
+  display: none;
+  align-items: center;
+  justify-content: center;
+}
+
+.lightbox.active {
+  display: flex;
+}
+
+.lightbox-close {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  background: rgba(255, 255, 255, 0.2);
+  border: none;
+  color: white;
+  font-size: 40px;
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  cursor: pointer;
+  z-index: 10002;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+  transition: background 0.3s ease;
+}
+
+.lightbox-close:hover {
+  background: rgba(255, 255, 255, 0.3);
+}
+
+.lightbox-counter {
+  position: absolute;
+  top: 30px;
+  left: 50%;
+  transform: translateX(-50%);
+  color: white;
+  font-size: 18px;
+  font-weight: 500;
+  z-index: 10002;
+  background: rgba(0, 0, 0, 0.5);
+  padding: 8px 16px;
+  border-radius: 20px;
+}
+
+.lightbox-swiper {
+  width: 100%;
+  height: 100%;
+  padding: 100px 80px;
+}
+
+.lightbox-swiper .swiper-slide {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.lightbox-image-container {
+  max-width: 100%;
+  max-height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.lightbox-image-container img {
+  max-width: 100%;
+  max-height: 80vh;
+  object-fit: contain;
+  border-radius: 4px;
+}
+
+.lightbox-caption {
+  position: absolute;
+  bottom: 40px;
+  left: 50%;
+  transform: translateX(-50%);
+  color: white;
+  font-size: 16px;
+  text-align: center;
+  z-index: 10002;
+  background: rgba(0, 0, 0, 0.7);
+  padding: 12px 24px;
+  border-radius: 8px;
+  max-width: 80%;
+}
+
+/* Flèches navigation lightbox */
+.lightbox .swiper-button-prev,
+.lightbox .swiper-button-next {
+  color: white;
+  width: 50px;
+  height: 50px;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 50%;
+  transition: background 0.3s ease;
+}
+
+.lightbox .swiper-button-prev:hover,
+.lightbox .swiper-button-next:hover {
+  background: rgba(255, 255, 255, 0.3);
+}
+
+.lightbox .swiper-button-prev::after,
+.lightbox .swiper-button-next::after {
+  font-size: 24px;
+  font-weight: bold;
+}
+
+/* Responsive lightbox */
+@media (max-width: 768px) {
+  .lightbox-swiper {
+    padding: 80px 20px;
+  }
+  
+  .lightbox-close {
+    top: 10px;
+    right: 10px;
+    width: 40px;
+    height: 40px;
+    font-size: 30px;
+  }
+  
+  .lightbox-counter {
+    top: 15px;
+    font-size: 14px;
+    padding: 6px 12px;
+  }
+  
+  .lightbox-caption {
+    bottom: 20px;
+    font-size: 14px;
+    padding: 10px 16px;
+    max-width: 90%;
+  }
+  
+  .lightbox .swiper-button-prev,
+  .lightbox .swiper-button-next {
+    width: 40px;
+    height: 40px;
+  }
+  
+  .lightbox .swiper-button-prev::after,
+  .lightbox .swiper-button-next::after {
+    font-size: 20px;
+  }
+}
