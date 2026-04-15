@@ -490,10 +490,6 @@ async function saveSettings() {
       carousel: currentCarouselSlides,
       featured_galleries: featured
     },
-    contact: {
-      intro_text: { fr: '', en: '', ar: '' },
-      formspree_endpoint: 'https://formspree.io/f/YOUR_FORM_ID'
-    },
     updated_at: serverTimestamp()
   };
   
